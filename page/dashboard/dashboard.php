@@ -1,13 +1,4 @@
 <?php
-session_start();
-if (!isset($_SESSION["username"])) {
-  echo "<script>";
-  echo "alert('กรุณาเข้าสู่ระบบ')";
-  echo "</script>";
-  header("refresh:1;index.php");
-} else {
-}
-
 ?>
 
 <!DOCTYPE html>

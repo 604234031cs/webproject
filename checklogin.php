@@ -13,7 +13,7 @@
         // echo $admin['username'];
         if($user['u_username']== $username && $user['u_password']==$password && $user['u_type'] =="admin"){
             session_start();
-            $_SESSION["username"] = $user['uusername'];
+            $_SESSION["username"] = $user['u_username'];
             print 'Redirecting...';
             header('Location:page/dashboard/dashboard.php',true,303);
             exit;
