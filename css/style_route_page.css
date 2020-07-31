@@ -1,0 +1,55 @@
+.card{
+    margin-left: 210px;
+    margin-right: 15px;
+    /* border-style: solid;
+    border-color: black;   */
+    color: rgb(0, 0, 0);
+    font-style: inherit;
+    position: absolute;
+    width: auto;
+}
+
+.nav-on{
+   margin-left: 200px;
+   background-color: #ce0cff;
+   font-size: 20px;
+   opacity: 1;
+} 
+
+.nav-item a{
+    color: lightcyan;
+} 
+ .card-header span{
+    font-size: 30px;
+    text-align: center;
+    padding-left: 15px;
+}
+.card-header a{
+    font-size: 20px;
+    margin-right: 0px;
+}
+span{
+    font-size: 30px;
+    margin-left: 210px;
+    margin-top: 90px;
+    position: relative;
+}
+
+
+ 
+ 
+
+
+ 
+
+
+
+
+
+
+
+
+
+  
+
+
