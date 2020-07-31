@@ -11,7 +11,7 @@
         $stm->execute();
         $user = $stm->fetch(PDO::FETCH_ASSOC);
         // echo $admin['username'];
-        if($user['uusername']== $username && $user['upassword']==$password && $user['u_type'] =="admin"){
+        if($user['u_username']== $username && $user['u_password']==$password && $user['u_type'] =="admin"){
             session_start();
             $_SESSION["username"] = $user['uusername'];
             print 'Redirecting...';
