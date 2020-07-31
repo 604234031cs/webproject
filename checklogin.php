@@ -4,14 +4,14 @@
         $username = $_POST['inputUsername'];
         $password = $_POST['inputPassword'];
         
-        $sql = "SELECT * FROM admin WHERE uusername=:username and upassword=:password";
+        $sql = "SELECT * FROM userlogin WHERE u_username=:username and u_password=:password";
         $stm = $connection->prepare($sql);
         $stm->bindValue(':username', $username);
         $stm->bindValue(':password', $password);
         $stm->execute();
         $user = $stm->fetch(PDO::FETCH_ASSOC);
         // echo $admin['username'];
-        if($user['uusername']== $username && $user['upassword']==$password){
+        if($user['uusername']== $username && $user['upassword']==$password && $user['u_type'] =="admin"){
             session_start();
             $_SESSION["username"] = $user['uusername'];
             print 'Redirecting...';
