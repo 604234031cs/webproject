@@ -3,19 +3,21 @@
     if(isset($_POST['inputUsername']) && isset($_POST['inputPassword'])){
         $username = $_POST['inputUsername'];
         $password = $_POST['inputPassword'];
-        
-        $sql = "SELECT * FROM userlogin WHERE u_username=:username and u_password=:password";
+        $sql = "SELECT * FROM admin WHERE username=:username and password=:password";
         $stm = $connection->prepare($sql);
         $stm->bindValue(':username', $username);
         $stm->bindValue(':password', $password);
         $stm->execute();
         $user = $stm->fetch(PDO::FETCH_ASSOC);
         // echo $admin['username'];
-        if($user['u_username']== $username && $user['u_password']==$password && $user['u_type'] =="admin"){
+        if($user['username']== $username && $user['password']==$password){
             session_start();
-            $_SESSION["username"] = $user['u_username'];
+            $_SESSION["name"] = $user['name'];
+            $_SESSION["surname"] = $user['surname'];
+            $_SESSION["username"] = $user['username'];
+            $_SESSION["sex"] = $user['sex'];
             print 'Redirecting...';
-            header('Location:page/dashboard/dashboard.php',true,303);
+            header('Location:page/driver_data/data_driver.php',true,303);
             exit;
         }
         else{
@@ -24,7 +26,4 @@
              echo "</script>";
             header("refresh:1;index.php"); 
         }
-    }else{
-        session_unset();
-        header('Location:index.php');
-    }
+    } 

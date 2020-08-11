@@ -2,6 +2,12 @@
 
 require '../../config.php';
 session_start();
+if ($_SESSION["username"] == null &&  $_SESSION["username"] == '') {
+  echo "<script>";
+  echo "alert('กรุณาลงชื่อเข้าใช้ระบบ')";
+  echo "</script>";
+  header('Location:../../index.php', true, 303);
+}
 $waypointnum = null;
 $route_id = $_SESSION['rid_addpoint'];
 if (isset($_GET['waypoint'])) {
@@ -26,7 +32,7 @@ if (isset($_POST['addposition'])) {
     // echo $nameLocationeNum[$i]; 
     // echo $nameLocationeNum[$i];
     // echo "<br>";
-    $sql2 = "INSERT INTO point_of_pass_car(po_name,po_latitude,po_longitude,rid,type)
+    $sql2 = "INSERT INTO point(po_name,po_latitude,po_longitude,rid,type)
                          value (:name,:lat,:long,:rid,'จุดผ่าน')";
     $stm = $connection->prepare($sql2);
     $stm->execute([':name' => $nameLocationeNum[$i], ':lat' => $latitudeNum[$i], ':long' => $longitudeNum[$i], ':rid' => $route_id]);
@@ -73,7 +79,7 @@ if (isset($_POST['addposition'])) {
         <a href="../dashboard/dashboard.php" class="list-group-item list-group-item-action bg-dark text-white"><i class="fas fa-folder-open"></i>&nbsp;dashboard</a>
         <a href="../driver_data/data_driver.php" class="list-group-item list-group-item-action bg-dark text-white "><i class="fas fa-folder-open"></i>&nbsp;ข้อมูลคนขับ</a>
         <a href="../route/data_route.php" class="list-group-item list-group-item-action bg-dark text-white "><i class="fas fa-folder-open"></i>&nbsp;จัดการเส้นทาง</a>
-        <a href="../../checklogin.php" class="list-group-item list-group-item-action bg-dark text-danger"><i class="fas fa-power-off">&nbsp;ออกจากระบบ</i></a>
+        <a href="../../checklogout.php" class="list-group-item list-group-item-action bg-dark text-danger"><i class="fas fa-power-off">&nbsp;ออกจากระบบ</i></a>
       </div>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -85,9 +91,10 @@ if (isset($_POST['addposition'])) {
           <ul class="navbar-nav mr-auto">
           </ul>
           <div class="form-inline my-2 my-lg-">
-            <a href="../../checklogin.php" class="navbar-nav mr-auto text-light"><i class="fas fa-power-off"></i></a>
+            <a href="../../checklogout.php" class="navbar-nav mr-auto text-light">
+              <span><?php echo $_SESSION["name"]; ?>&nbsp; <?php echo $_SESSION["surname"];  ?>&nbsp;<i class="fas fa-user-shield"></i></span>
+            </a>
           </div>
-        </div>
 
       </nav>
 
@@ -139,7 +146,7 @@ if (isset($_POST['addposition'])) {
 
 
           <style>
-            input{
+            input {
               width: 50%;
             }
           </style>
@@ -165,7 +172,7 @@ if (isset($_POST['addposition'])) {
                           <label for="colFormLabelSm" class="col-sm-3 col-form-label col-form-label-sm">
                             <h4>ชื่อสถานที่</h4>
                           </label>
-                          <input type="text"  name="namelocation[]">
+                          <input type="text" name="namelocation[]">
                         </div>
                         <div class="form-group row">
                           <label for="colFormLabelSm" class="col-sm-3 col-form-label col-form-label-sm">
@@ -187,7 +194,7 @@ if (isset($_POST['addposition'])) {
               </div>
               <!-- /row -->
               <button type="submit" class="btn btn-success btn-lg " name="addposition">บันทึกข้อมูล</button>
-         
+
             </form>
             <!-- /form -->
           <?php } else { ?>

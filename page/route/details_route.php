@@ -1,6 +1,13 @@
 <?php
 require '../../config.php';
 $deteil_route = $_GET['detailroute'];
+session_start();
+if ($_SESSION["username"] == null &&  $_SESSION["username"] == '') {
+    echo "<script>";
+    echo "alert('กรุณาลงชื่อเข้าใช้ระบบ')";
+    echo "</script>";
+    header('Location:../../index.php', true, 303);
+}
 //แสดงข้อมูลตารางเส้นทาง
 $sql1 = "SELECT * FROM  route where rid='$deteil_route'";
 $stm = $connection->prepare($sql1);
@@ -12,7 +19,7 @@ echo '<script type="text/javascript">';
 echo "var data1 = JSON.parse('$json')"; // ส่งค่า $data จาก PHP ไปยังตัวแปร data ของ Javascript
 echo '</script>';
 //แสดงตารางจุดผ่าน
-$sql1 = "SELECT * FROM  point_of_pass_car where rid = '$deteil_route'";
+$sql1 = "SELECT * FROM  point where rid = '$deteil_route'";
 $stm = $connection->prepare($sql1);
 $stm->execute();
 $points = $stm->fetchAll(PDO::FETCH_ASSOC);
@@ -103,10 +110,10 @@ echo '</script>';
                         <img src="../../img/LogoApp.png" class="rounded" alt="Cinque Terre" style="width: 10rem;">
                     </center>
                 </div>
-                <a href="../dashboard/dashboard.php" class="list-group-item list-group-item-action bg-dark text-white"><i class="fas fa-folder-open"></i>&nbsp;dashboard</a>
+
                 <a href="../driver_data/data_driver.php" class="list-group-item list-group-item-action bg-dark text-white "><i class="fas fa-folder-open"></i>&nbsp;ข้อมูลคนขับ</a>
                 <a href="../route/data_route.php" class="list-group-item list-group-item-action bg-dark text-white "><i class="fas fa-folder-open"></i>&nbsp;จัดการเส้นทาง</a>
-                <a href="../../checklogin.php" class="list-group-item list-group-item-action bg-dark text-danger"><i class="fas fa-power-off">&nbsp;ออกจากระบบ</i></a>
+                <a href="../../checklogout.php" class="list-group-item list-group-item-action bg-dark text-danger"><i class="fas fa-power-off">&nbsp;ออกจากระบบ</i></a>
             </div>
         </div>
         <!-- /#sidebar-wrapper -->
@@ -119,7 +126,9 @@ echo '</script>';
                     <ul class="navbar-nav mr-auto">
                     </ul>
                     <div class="form-inline my-2 my-lg-">
-                        <a href="../../checklogin.php" class="navbar-nav mr-auto text-light"><i class="fas fa-power-off "></i></a>
+                        <a href="../../checklogout.php" class="navbar-nav mr-auto text-light">
+                            <span><?php echo $_SESSION["name"]; ?>&nbsp; <?php echo $_SESSION["surname"];  ?>&nbsp;<i class="fas fa-user-shield"></i></span>
+                        </a>
                     </div>
                 </div>
             </nav>
@@ -219,9 +228,8 @@ echo '</script>';
                                 </td>
                                 <td>
                                     <center>
-                                        <?php if ($location['type_main'] == '1') {
-                                            echo 'ต้นทาง';
-                                        }
+                                        <?php
+                                        echo 'ต้นทาง';
                                         ?>
                                     </center>
                                 </td>
@@ -238,9 +246,8 @@ echo '</script>';
                                 </td>
                                 <td>
                                     <center>
-                                        <?php if ($location['type_main'] == '1') {
-                                            echo 'ปลายทาง';
-                                        }
+                                        <?php
+                                        echo 'ปลายทาง';
                                         ?>
                                     </center>
                                 </td>
@@ -258,7 +265,7 @@ echo '</script>';
                                     <center><?php echo $point['po_longitude']; ?></center>
                                 </td>
                                 <td>
-                                    <center><?php echo $point['type']; ?></center>
+                                    <center><?php echo "จุดระหว่างทาง" ?></center>
                                 </td>
                             </tr>
                     </tbody>

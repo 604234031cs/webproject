@@ -3,7 +3,7 @@ require '../../config.php';
 
 if(isset($_GET['delroute'])){
   $delroute = $_GET['delroute'];
-$sql1 = "DELETE FROM point_of_pass_car where rid ='$delroute'";
+$sql1 = "DELETE FROM point where rid ='$delroute'";
 $stm = $connection->prepare($sql1);
 if ($stm->execute()) {
   $sql2 = "DELETE FROM route where rid ='$delroute'";
@@ -18,7 +18,7 @@ if ($stm->execute()) {
 }
 }else if(isset($_GET['delpoint'])){
   $delpoint = $_GET['delpoint'];
-  $sql1 = "DELETE FROM point_of_pass_car where po_id ='$delpoint'";
+  $sql1 = "DELETE FROM point where po_id ='$delpoint'";
   $stm = $connection->prepare($sql1);
   $stm->execute();
   echo "<script>";

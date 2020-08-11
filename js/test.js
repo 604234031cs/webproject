@@ -5,6 +5,10 @@ function init() {
     //  map.location(longdo.LocationMode.Geolocation); // go to 100, 16 when created map
     // map.location(longdo.LocationMode.Geolocation);
     map.location(longdo.LocationMode.Geolocation);
+    map.Event.bind('click', function() {
+      var mouseLocation = map.location(longdo.LocationMode.Pointer);
+      map.Overlays.add(new longdo.Marker(mouseLocation));
+    });
 
   }
 

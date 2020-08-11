@@ -1,12 +1,20 @@
 <?php
 require '../../config.php';
 $driverid = $_GET['detaildriver'];
+
+session_start();
+if ($_SESSION["username"] == null &&  $_SESSION["username"] == '') {
+    echo "<script>";
+    echo "alert('กรุณาลงชื่อเข้าใช้ระบบ')";
+    echo "</script>";
+    header('Location:../../index.php', true, 303);
+}
 if (isset($_POST['edit_data'])) {
     $edit_name = $_POST['edit_name'];
     $edit_lastname = $_POST['edit_lastname'];
     $edit_phone = $_POST['edit_phonenumber'];
     $edit_route = $_POST['edit_routeadd'];
-    $sql = "UPDATE driver SET name='$edit_name',lastname='$edit_lastname',phone='$edit_phone',rid='$edit_route' 
+    $sql = "UPDATE driver SET d_name='$edit_name',d_lastname='$edit_lastname',phone='$edit_phone',rid='$edit_route' 
     where d_id='$driverid'";
     $stm = $connection->prepare($sql);
     if ($stm->execute()) {
@@ -18,18 +26,18 @@ if (isset($_POST['edit_data'])) {
         echo "alert('เกิดข้อผิดพลาด')";
         echo "</script>";
     }
-}  
-    $sql1 = "SELECT driver.d_id,driver.name,driver.lastname,driver.phone,route.rid,route.start_route_name,route.end_route_name
+}
+$sql1 = "SELECT driver.d_id,driver.d_name,driver.d_lastname,driver.phone,route.rid,route.start_route_name,route.end_route_name
     FROM route,driver
     WHERE route.rid = driver.rid
     and driver.d_id = '$driverid'";
-    $stm = $connection->prepare($sql1);
-    $stm->execute();
-    $drivers = $stm->fetch(PDO::FETCH_ASSOC);
-    $sql3 = "SELECT * From route";
-    $stm = $connection->prepare($sql3);
-    $stm->execute();
-    $loadroutes = $stm->fetchAll();
+$stm = $connection->prepare($sql1);
+$stm->execute();
+$drivers = $stm->fetch(PDO::FETCH_ASSOC);
+$sql3 = "SELECT * From route";
+$stm = $connection->prepare($sql3);
+$stm->execute();
+$loadroutes = $stm->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -61,10 +69,10 @@ if (isset($_POST['edit_data'])) {
                         <img src="../../img/LogoApp.png" class="rounded" alt="Cinque Terre" style="width: 10rem;">
                     </center>
                 </div>
-                <a href="../dashboard/dashboard.php" class="list-group-item list-group-item-action bg-dark text-white"><i class="fas fa-folder-open"></i>&nbsp;dashboard</a>
+
                 <a href="../driver_data/data_driver.php" class="list-group-item list-group-item-action bg-dark text-white "><i class="fas fa-folder-open"></i>&nbsp;ข้อมูลคนขับ</a>
                 <a href="../route/data_route.php" class="list-group-item list-group-item-action bg-dark text-white "><i class="fas fa-folder-open"></i>&nbsp;จัดการเส้นทาง</a>
-                <a href="../../logout.php" class="list-group-item list-group-item-action bg-dark text-danger"><i class="fas fa-power-off">&nbsp;ออกจากระบบ</i></a>
+                <a href="../../checklogout.php" class="list-group-item list-group-item-action bg-dark text-danger"><i class="fas fa-power-off">&nbsp;ออกจากระบบ</i></a>
             </div>
         </div>
         <!-- /#sidebar-wrapper -->
@@ -77,7 +85,9 @@ if (isset($_POST['edit_data'])) {
                     <ul class="navbar-nav mr-auto">
                     </ul>
                     <div class="form-inline my-2 my-lg-">
-                        <a href="../../logout.php" class="navbar-nav mr-auto text-light"><i class="fas fa-power-off "></i></a>
+                        <a href="../../checklogout.php" class="navbar-nav mr-auto text-light">
+                            <span><?php echo $_SESSION["name"]; ?>&nbsp; <?php echo $_SESSION["surname"];  ?>&nbsp;<i class="fas fa-user-shield"></i></span>
+                        </a>
                     </div>
                 </div>
             </nav>
@@ -98,11 +108,11 @@ if (isset($_POST['edit_data'])) {
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label for="inputName">ชื่อ</label>
-                                    <input type="text" class="form-control" id="inputName" name="edit_name" value="<?php echo $drivers['name'] ?>" required>
+                                    <input type="text" class="form-control" id="inputName" name="edit_name" value="<?php echo $drivers['d_name'] ?>" required>
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="inputLastname">นามสกุล</label>
-                                    <input type="text" class="form-control" id="inputLastname" name="edit_lastname" value="<?php echo $drivers['lastname'] ?>" required>
+                                    <input type="text" class="form-control" id="inputLastname" name="edit_lastname" value="<?php echo $drivers['d_lastname'] ?>" required>
                                 </div>
                             </div>
                             <div class="form-group">

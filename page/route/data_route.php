@@ -3,6 +3,14 @@ require '../../config.php';
 $message = "";
 $perpage = 5;
 // ดึงข้อมูลจาก database
+session_start();
+
+if ($_SESSION["username"] == null &&  $_SESSION["username"] == '') {
+  echo "<script>";
+  echo "alert('กรุณาลงชื่อเข้าใช้ระบบ')";
+  echo "</script>";
+  header('Location:../../index.php', true, 303);
+}
 if (isset($_GET['page'])) {
   $page = $_GET['page'];
 } else {
@@ -42,11 +50,14 @@ $check_id = $stm->fetch(PDO::FETCH_ASSOC);
   <link rel="stylesheet" href="../../fontawesome/css/all.min.css">
   <!-- Bootstrap core CSS -->
   <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <script type="text/javascript" src="https://api.longdo.com/map/?key=8b2c05d9523bf70f5c85804f7e98de02 "></script>
+  <script type="text/javascript" src="../../js/test.js "></script>
   <!-- Custom styles for this template -->
   <link href="../../css/responside.css" rel="stylesheet">
+
 </head>
 
-<body>
+<body onload="init();">
   <div class="d-flex" id="wrapper">
 
     <!-- Sidebar -->
@@ -57,10 +68,10 @@ $check_id = $stm->fetch(PDO::FETCH_ASSOC);
             <img src="../../img/LogoApp.png" class="rounded" alt="Cinque Terre" style="width: 10rem;">
           </center>
         </div>
-        <a href="../dashboard/dashboard.php" class="list-group-item list-group-item-action bg-dark text-white"><i class="fas fa-folder-open"></i>&nbsp;dashboard</a>
+
         <a href="../driver_data/data_driver.php" class="list-group-item list-group-item-action bg-dark text-white "><i class="fas fa-folder-open"></i>&nbsp;ข้อมูลคนขับ</a>
         <a href="#" class="list-group-item list-group-item-action bg-dark text-white"><i class="fas fa-folder-open"></i>&nbsp;จัดการเส้นทาง</a>
-        <a href="../../checklogin.php" class="list-group-item list-group-item-action bg-dark text-danger"><i class="fas fa-power-off">&nbsp;ออกจากระบบ</i></a>
+        <a href="../../checklogout.php" class="list-group-item list-group-item-action bg-dark text-danger"><i class="fas fa-power-off">&nbsp;ออกจากระบบ</i></a>
       </div>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -72,9 +83,10 @@ $check_id = $stm->fetch(PDO::FETCH_ASSOC);
           <ul class="navbar-nav mr-auto">
           </ul>
           <div class="form-inline my-2 my-lg-">
-            <a href="../../checklogin.php" class="navbar-nav mr-auto text-light"><i class="fas fa-power-off"></i></a>
+            <a href="../../checklogout.php" class="navbar-nav mr-auto text-light">
+            <span><?php echo $_SESSION["name"]; ?>&nbsp; <?php echo $_SESSION["surname"];  ?>&nbsp;<i class="fas fa-user-shield"></i></span>
+          </a>
           </div>
-        </div>
       </nav>
       <br>
       <div class="container-fluid">
@@ -118,29 +130,40 @@ $check_id = $stm->fetch(PDO::FETCH_ASSOC);
                 </tr>
               </thead>
               <tbody>
-                <?php foreach ($routes as $route) : ?>
+                <?php if ($routes != null) { ?>
+                  <?php foreach ($routes as $route) : ?>
+                    <tr>
+                      <td>
+                        <center><?php echo $route['rid']; ?> </center>
+                      </td>
+                      <td>
+                        <center><?php echo $route['start_route_name']; ?></center>
+                      </td>
+                      <td>
+                        <center><?php echo $route['end_route_name']; ?></center>
+                      </td>
+                      <td>
+                        <center>
+                          <a href="details_route.php?detailroute=<?= $route['rid']; ?>" class="btn btn-primary active"><i class="fas fa-search"></i> รายละเอียด</a>
+                          <a href="ridinsert.php?addpoint=<?= $route['rid']; ?>" class="btn btn-warning active"><i class="fas fa-map-marker-alt"></i> เพิ่มจุดในเส้นทาง</a>
+                          <a href="ridedit.php?editrid=<?= $route['rid']; ?>" class="btn btn-info active"><i class="fas fa-edit"></i> แก้ไขข้อมูล</a>
+                          <a onclick="return confirm('ต้องการลบข้อมูลเส้นทางนี้หรือไม่?')" href="route_delete.php?delroute=<?= $route['rid']; ?>" class="btn btn-danger active"><i class="fas fa-trash-alt"></i> ลบข้อมูล</a>
+                        </center>
+                      </td>
+                    </tr>
+                  <?php endforeach; ?>
+                <?php } else { ?>
                   <tr>
-                    <td>
-                      <center><?php echo $route['rid']; ?> </center>
-                    </td>
-                    <td>
-                      <center><?php echo $route['start_route_name']; ?></center>
-                    </td>
-                    <td>
-                      <center><?php echo $route['end_route_name']; ?></center>
-                    </td>
-                    <td>
-                      <center>
-                        <a href="details_route.php?detailroute=<?= $route['rid']; ?>" class="btn btn-primary active"><i class="fas fa-search"></i> รายละเอียด</a>
-                        <a href="ridinsert.php?addpoint=<?= $route['rid']; ?>" class="btn btn-Warning active"><i class="fas fa-map-marker-alt"></i> เพิ่มจุดในเส้นทาง</a>
-                        <a href="ridedit.php?editrid=<?= $route['rid']; ?>" class="btn btn-info active"><i class="fas fa-edit"></i> แก้ไขข้อมูล</a>
-                        <a onclick="return confirm('ต้องการลบข้อมูลเส้นทางนี้หรือไม่?')" href="route_delete.php?delroute=<?= $route['rid']; ?>" class="btn btn-danger active"><i class="fas fa-trash-alt"></i> ลบข้อมูล</a>
-                      </center>
+                    <td colspan="6">
+                      <h4> ไม่พบข้อมูลเส้นทางในฐานข้อมูล</h4>
                     </td>
                   </tr>
+
+                <?php  } ?>
               </tbody>
-            <?php endforeach; ?>
+
             </table>
+
             <?php
             $sql1 = "SELECT * FROM  route";
             $stm = $connection->prepare($sql1);
@@ -192,52 +215,49 @@ $check_id = $stm->fetch(PDO::FETCH_ASSOC);
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
+      <style>
+        #map {
+          width: 100%;
+          height: 300px;
+          border-style: solid;
+        }
+      </style>
       <div class="modal-body">
         <!-- form add data driver -->
+        <div id="map">
+
+        </div>
         <form method="POST" action="add_route_database.php">
           <div class="form-group">
-            <label for="inputIddriver">รหัสเส้นทาง</label>
-            <?php if ($check_id['i'] == null) { ?>
-              <input type="text" class="form-control" id="rid" name="rid" value="R01" readonly>
-              <input type="text" class="form-control" id="i" name="i" value="1" hidden>
-            <?php } else if ($check_id['i'] != null) { ?>
-              <input type="text" class="form-control" id="rid" name="rid" value="<?php $i = $check_id['i'] + 1;
-                                                                                  $auto_rid = 'R0' . $i;
-                                                                                  echo $auto_rid; ?>" readonly>
-              <input type="text" class="form-control" id="i" name="i" value="<?php $auto_i = $check_id['i'] + 1;
-                                                                              echo $auto_i; ?>" hidden>
-            <?php } ?>
-          </div>
-
-          <div class="form-group">
-            <label for="inputIddriver">ระบุต้นทาง</label>
-            <input type="text" class="form-control" id="startroute" name="start" required>
-            <div class="form-row">
-              <div class="form-group col-md-6">
-                <label for="inputName">ตำแหน่งละติจูดต้นทาง</label>
-                <input type="text" class="form-control" id="waypoint" name="start_po_lat" required>
-                <label for="inputName">ตำแหน่งลองจิจูดต้นทาง</label>
-                <input type="text" class="form-control" id="waypoint" name="start_po_log" required>
+            <div class="form-group">
+              <label for="inputIddriver"><span>ระบุต้นทาง</span></label>
+              <input type="text" class="form-control" id="startroute" name="start" required>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="inputName">ตำแหน่งละติจูดต้นทาง</label>
+                  <input type="text" class="form-control" id="waypoint" name="start_po_lat" required>
+                  <label for="inputName">ตำแหน่งลองจิจูดต้นทาง</label>
+                  <input type="text" class="form-control" id="waypoint" name="start_po_log" required>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="form-group">
-            <label for="inputIddriver">ระบุปลายทาง</label>
-            <input type="text" class="form-control" id="endroute" name="end">
-            <div class="form-row">
-              <div class="form-group col-md-6">
-                <label for="inputName">ตำแหน่งละติจูดปลายทาง</label>
-                <input type="text" class="form-control" id="waypoint" name="end_po_lat" required>
-                <label for="inputName">ตำแหน่งลองจิจูดปลายทาง</label>
-                <input type="text" class="form-control" id="waypoint" name="end_po_log" required>
+            <div class="form-group">
+              <label for="inputIddriver">ระบุปลายทาง</label>
+              <input type="text" class="form-control" id="endroute" name="end">
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="inputName">ตำแหน่งละติจูดปลายทาง</label>
+                  <input type="text" class="form-control" id="waypoint" name="end_po_lat" required>
+                  <label for="inputName">ตำแหน่งลองจิจูดปลายทาง</label>
+                  <input type="text" class="form-control" id="waypoint" name="end_po_log" required>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary" name="insertroute">เพิ่มข้อมูลเส้นทาง</button>
-          </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary" name="insertroute">เพิ่มข้อมูลเส้นทาง</button>
+            </div>
         </form>
         <!-- end -->
       </div>

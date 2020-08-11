@@ -5,6 +5,12 @@
   session_start();
   // echo $_GET['editrid'];
   $editrid = $_SESSION['rid_edi'];
+  if ($_SESSION["username"] == null &&  $_SESSION["username"] == '') {
+    echo "<script>";
+    echo "alert('กรุณาลงชื่อเข้าใช้ระบบ')";
+    echo "</script>";
+    header('Location:../../index.php', true, 303);
+  }
   // echo $_POST['editrid'];
   if (isset($_POST['editsr_er'])) {
     //   // ข้อมูลแก้ไขจาก form เส้นทาง 'ต้นทาง-ปลายทาง'
@@ -34,7 +40,7 @@
     $editpo_lat = $_POST['editpo_latitude'];
     $editpo_log = $_POST['editpo_longitude'];
 
-    $sql = "UPDATE point_of_pass_car SET po_name='$editpo_name',po_latitude='$editpo_lat',po_longitude='$editpo_log' WHERE po_id = '$editpo_id' ";
+    $sql = "UPDATE point SET po_name='$editpo_name',po_latitude='$editpo_lat',po_longitude='$editpo_log' WHERE po_id = '$editpo_id' ";
     $stm = $connection->prepare($sql);
     if ($stm->execute()) {
       echo "<script>";
@@ -55,7 +61,7 @@
   // echo $editroutes['rid'];
   // $message = $driver['name'];
   $start = ($page - 1) * $perpage;
-  $sql2 = "SELECT * FROM point_of_pass_car where rid='$editrid' limit {$start},{$perpage}";
+  $sql2 = "SELECT * FROM point where rid='$editrid' limit {$start},{$perpage}";
   $stm = $connection->prepare($sql2);
   $stm->execute();
   $points = $stm->fetchAll(PDO::FETCH_ASSOC);
@@ -95,10 +101,10 @@
              <img src="../../img/LogoApp.png" class="rounded" alt="Cinque Terre" style="width: 10rem;">
            </center>
          </div>
-         <a href="../dashboard/dashboard.php" class="list-group-item list-group-item-action bg-dark text-white"><i class="fas fa-folder-open"></i>&nbsp;dashboard</a>
+
          <a href="../driver_data/data_driver.php" class="list-group-item list-group-item-action bg-dark text-white "><i class="fas fa-folder-open"></i>&nbsp;ข้อมูลคนขับ</a>
          <a href="../route/data_route.php" class="list-group-item list-group-item-action bg-dark text-white"><i class="fas fa-folder-open"></i>&nbsp;จัดการเส้นทาง</a>
-         <a href="../../checklogin.php" class="list-group-item list-group-item-action bg-dark text-danger"><i class="fas fa-power-off">&nbsp;ออกจากระบบ</i></a>
+         <a href="../../checklogout.php" class="list-group-item list-group-item-action bg-dark text-danger"><i class="fas fa-power-off">&nbsp;ออกจากระบบ</i></a>
        </div>
      </div>
      <!-- /#sidebar-wrapper -->
@@ -110,7 +116,9 @@
            <ul class="navbar-nav mr-auto">
            </ul>
            <div class="form-inline my-2 my-lg-">
-             <a href="../../checklogin.php" class="navbar-nav mr-auto text-light"><i class="fas fa-power-off"></i></a>
+             <a href="../../checklogout.php" class="navbar-nav mr-auto text-light">
+               <span><?php echo $_SESSION["name"]; ?>&nbsp; <?php echo $_SESSION["surname"];  ?>&nbsp;<i class="fas fa-user-shield"></i></span>
+             </a>
            </div>
          </div>
        </nav>
@@ -271,7 +279,7 @@
              <?php endforeach; ?>
              </table>
              <?php
-              $sql1 = "SELECT * FROM  point_of_pass_car where rid = '$editrid'";
+              $sql1 = "SELECT * FROM  point where rid = '$editrid'";
               $stm = $connection->prepare($sql1);
               $stm->execute();
               $row = $stm->fetchAll(PDO::FETCH_ASSOC);
@@ -317,11 +325,12 @@
          document.getElementById("showd_name").value = name;
          document.getElementById("showd_lat").value = lat;
          document.getElementById("showd_log").value = log;
-         
+
        }, 200); // setTimeout เพราะว่าเผื่อเวลาที่ใช้ในการเปิด modal ครับ
      }
    </script>
  </body>
+
  </html>
 
  <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

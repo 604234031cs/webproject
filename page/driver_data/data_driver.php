@@ -2,6 +2,14 @@
 require '../../config.php';
 $message = "";
 $perpage = 5;
+session_start();
+if ($_SESSION["username"] == null &&  $_SESSION["username"] == '') {
+  echo "<script>";
+  echo "alert('กรุณาลงชื่อเข้าใช้ระบบ')";
+  echo "</script>";
+  header('Location:../../index.php', true, 303);
+}
+
 if (isset($_GET['page'])) {
   $page = $_GET['page'];
 } else {
@@ -11,7 +19,7 @@ if (isset($_GET['page'])) {
 $search = isset($_POST['key_word']) ? $_POST['key_word'] : '';
 $start = ($page - 1) * $perpage;
 
-$sql1 = "SELECT * FROM driver where d_id like '%$search%'  limit {$start},{$perpage}  ";
+$sql1 = "SELECT * FROM driver where d_username like '%$search%' or d_name like '%$search%' limit {$start},{$perpage}  ";
 $stm = $connection->prepare($sql1);
 $stm->execute();
 $drivers = $stm->fetchAll(PDO::FETCH_ASSOC);
@@ -52,10 +60,10 @@ $loadroutes = $stm->fetchAll();
             <img src="../../img/LogoApp.png" class="rounded" alt="Cinque Terre" style="width: 10rem;">
           </center>
         </div>
-        <a href="../dashboard/dashboard.php" class="list-group-item list-group-item-action bg-dark text-white"><i class="fas fa-folder-open"></i>&nbsp;dashboard</a>
+
         <a href="#" class="list-group-item list-group-item-action bg-dark text-white"><i class="fas fa-folder-open"></i>&nbsp;ข้อมูลคนขับ</a>
         <a href="../route/data_route.php" class="list-group-item list-group-item-action bg-dark text-white"><i class="fas fa-folder-open"></i>&nbsp;จัดการเส้นทาง</a>
-        <a href="../../checklogin.php" class="list-group-item list-group-item-action bg-dark text-danger"><i class="fas fa-power-off">&nbsp;ออกจากระบบ</i></a>
+        <a href="../../checklogout.php" class="list-group-item list-group-item-action bg-dark text-danger"><i class="fas fa-power-off">&nbsp;ออกจากระบบ</i></a>
       </div>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -69,7 +77,9 @@ $loadroutes = $stm->fetchAll();
           <ul class="navbar-nav mr-auto">
           </ul>
           <div class="form-inline my-2 my-lg-">
-            <a href="../../checklogin.php" class="navbar-nav mr-auto text-light"><i class="fas fa-power-off"></i></a>
+            <a href="../../checklogout.php" class="navbar-nav mr-auto text-light">
+              <span><?php echo $_SESSION["name"]; ?>&nbsp; <?php echo $_SESSION["surname"];  ?>&nbsp;<i class="fas fa-user-shield"></i></span>
+            </a>
           </div>
         </div>
       </nav>
@@ -104,7 +114,7 @@ $loadroutes = $stm->fetchAll();
                 <!-- start-table-->
                 <tr>
                   <th>
-                    <center>รหัสคนขับ</center>
+                    <center>ชื่อเข้าใช้ระบบ</center>
                   </th>
                   <th>
                     <center>ชื่อ-นามสกุล</center>
@@ -131,43 +141,53 @@ $loadroutes = $stm->fetchAll();
                 </tr>
               </thead>
               <tbody>
-                <?php foreach ($drivers as $driver) : ?>
-                  <tr>
-                    <td>
-                      <center><?php echo $driver['d_id']; ?></center>
-                    </td>
-                    <td>
-                      <center><?php echo $driver['name'] . "&nbsp;&nbsp;&nbsp;" . $driver['lastname']; ?></center>
-                    </td>
-                    <td>
-                      <center><?php echo $driver['phone']; ?></center>
-                    </td>
-                    <td>
-                      <center><?php echo $driver['sex']; ?></center>
-                    </td>
-                    <td>
-                      <center>
-                        <?php if ($driver['status_driver'] == '0') {
-                          echo "Offline";
-                        } elseif ($driver['status_driver'] == '1') {
-                          echo "Online";
-                        }
-                        ?>
-                      </center>
-                    </td>
-                    <td>
-
-                      <center>
-                        <a type="button" onclick="showdatadriver('<?php echo $driver['name']; ?>','<?php echo $driver['lastname']; ?>','<?php echo $driver['phone']; ?>',
+                <?php if ($drivers != null) { ?>
+                  <?php foreach ($drivers as $driver) : ?>
+                    <tr>
+                      <td>
+                        <center><?php echo $driver['d_username']; ?></center>
+                      </td>
+                      <td>
+                        <center><?php echo $driver['d_name'] . "&nbsp;&nbsp;&nbsp;" . $driver['d_lastname']; ?></center>
+                      </td>
+                      <td>
+                        <center><?php echo $driver['phone']; ?></center>
+                      </td>
+                      <td>
+                        <center><?php echo $driver['sex']; ?></center>
+                      </td>
+                      <td>
+                        <center>
+                          <?php if ($driver['status_driver'] == '0') {
+                            echo "Offline";
+                          } elseif ($driver['status_driver'] == '1') {
+                            echo "Online";
+                          }
+                          ?>
+                        </center>
+                      </td>
+                      <td>
+                        <center>
+                          <a type="button" onclick="showdatadriver('<?php echo $driver['d_name']; ?>','<?php echo $driver['d_lastname']; ?>','<?php echo $driver['phone']; ?>',
                       '<?php echo $driver['sex']; ?>', '<?php echo $driver['rid']; ?>')" class="btn btn-warning active " data-toggle="modal" data-target="#datadriver">
-                          <i class="fas fa-clipboard-list"></i> รายละเอียด</a>
-                        <a href="details_driver.php?detaildriver=<?= $driver['d_id']; ?>" class="btn btn-info active"><i class="fas fa-user-edit"></i> แก้ไขข้อมูล</a>
-                        <a onclick="return confirm('ต้องการลบข้อมูลคนขับหรือไม่?')" href="driver_Delete.php?del=<?= $driver['d_id']; ?>" class="btn btn-danger active"><i class="fas fa-trash-alt"></i> ลบข้อมูล</a>
-                      </center>
+                            <i class="fas fa-clipboard-list"></i> รายละเอียด</a>
+                          <a href="details_driver.php?detaildriver=<?= $driver['d_id']; ?>" class="btn btn-info active"><i class="fas fa-user-edit"></i> แก้ไขข้อมูล</a>
+                          <a onclick="return confirm('ต้องการลบข้อมูลคนขับหรือไม่?')" href="driver_Delete.php?del=<?= $driver['d_id']; ?>" class="btn btn-danger active"><i class="fas fa-trash-alt"></i> ลบข้อมูล</a>
+                        </center>
+                      </td>
+                    </tr>
+                  <?php endforeach; ?>
+                <?php } else { ?>
+                  <tr>
+                    <td colspan="6">
+                      <h4> ไม่พบข้อมูลคนขับในฐานข้อมูล</h4>
                     </td>
                   </tr>
+
+                <?php  } ?>
               </tbody>
-            <?php endforeach; ?>
+
+
             </table> <!-- end-table-->
             <?php
             $sql1 = "SELECT * FROM  driver";
@@ -208,7 +228,7 @@ $loadroutes = $stm->fetchAll();
   <script>
     function showdatadriver(name, lname, phone, sex, rid) {
 
-     
+
       $('#datadriver').modal('show');
       setTimeout(function() {
         document.getElementById("show_name").value = name;
@@ -247,6 +267,17 @@ $loadroutes = $stm->fetchAll();
               </div>
             </div>
 
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputName">Name</label>
+                <input type="text" class="form-control" id="inputNameEng" name="nameEng" required>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="inputLastname">Surname</label>
+                <input type="text" class="form-control" id="inputLastnameEng" name="lastnameEng" required>
+              </div>
+            </div>
+
 
             <div class="form-group col-md-6">
               <div class="form-check form-check-inline">
@@ -267,16 +298,12 @@ $loadroutes = $stm->fetchAll();
               <input type="text" class="form-control" id="inputPhoneNumber" name="phonenumber" required>
             </div>
 
-            <div class="form-row">
+            <!-- <div class="form-row">
               <div class="form-group col-md-6">
                 <label for="inputName">Username</label>
-                <input type="text" class="form-control" id="inputName" name="username" required>
+                <input type="text" class="form-control" id="inputName" name="username" placeholder="" required>
               </div>
-              <div class="form-group col-md-6">
-                <label for="inputLastname">Password</label>
-                <input type="text" class="form-control" id="inputLastname" name="password" required>
-              </div>
-            </div>
+            </div> -->
             <div class="form-group">
               <label for="exampleFormControlSelect1">กำหนดเส้นทาง</label>
               <select class="form-control" id="exampleFormControlSelect1" name="routeadd">
