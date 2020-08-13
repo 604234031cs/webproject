@@ -12,10 +12,12 @@
         // echo $admin['username'];
         if($user['username']== $username && $user['password']==$password){
             session_start();
+            $_SESSION["id"] = $user['id'];
             $_SESSION["name"] = $user['name'];
             $_SESSION["surname"] = $user['surname'];
             $_SESSION["username"] = $user['username'];
             $_SESSION["sex"] = $user['sex'];
+            $_SESSION['type'] = $user['type'];
             print 'Redirecting...';
             header('Location:page/driver_data/data_driver.php',true,303);
             exit;

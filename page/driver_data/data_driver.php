@@ -61,9 +61,16 @@ $loadroutes = $stm->fetchAll();
           </center>
         </div>
 
-        <a href="#" class="list-group-item list-group-item-action bg-dark text-white"><i class="fas fa-folder-open"></i>&nbsp;ข้อมูลคนขับ</a>
-        <a href="../route/data_route.php" class="list-group-item list-group-item-action bg-dark text-white"><i class="fas fa-folder-open"></i>&nbsp;จัดการเส้นทาง</a>
-        <a href="../../checklogout.php" class="list-group-item list-group-item-action bg-dark text-danger"><i class="fas fa-power-off">&nbsp;ออกจากระบบ</i></a>
+        <a href="#" class="list-group-item list-group-item-action bg-dark text-white">
+          <i class="fas fa-folder-open mr-2"></i>ข้อมูลคนขับ</a>
+        <a href="../route/data_route.php" class="list-group-item list-group-item-action bg-dark text-white">
+        <i class="fas fa-folder-open mr-2"></i>จัดการเส้นทาง</a>
+        <?php if ($_SESSION['type'] == 'm_admin') { ?>
+          <a href="../admin/dataadmin.php" class="list-group-item list-group-item-action bg-dark text-white ">
+          <i class="fas fa-folder-open mr-2"></i>จัดการผู้แลระบบ</a>
+        <?php } ?>
+        <a href="../../checklogout.php" class="list-group-item list-group-item-action bg-dark text-danger">
+        <i class="fas fa-power-off mr-2"></i>ออกจากระบบ</a>
       </div>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -74,13 +81,23 @@ $loadroutes = $stm->fetchAll();
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top ">
         <button class="btn btn-dark" id="menu-toggle"><i class="fa fa-bars"></i></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav mr-auto">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown" aria-labelledby="navbarDropdown">
+              <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" style="color:white;"><?php echo $_SESSION['name']; ?>&nbsp;<?php echo $_SESSION['surname']; ?>
+                <i class="fas fa-user-shield"></i>
+              </a>
+              <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                <div class="dropdown-divider"></div>
+                <a href="../account/account.php" class="dropdown-item">
+                  <i class="fas fa-user-cog"></i> ข้อมูลส่วนตัว
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="../../checklogout.php" class="dropdown-item" style="color:red;">
+                  <i class="fas fa-power-off mr-2"></i>ออกจากระบบ
+                </a>
+            </li>
+
           </ul>
-          <div class="form-inline my-2 my-lg-">
-            <a href="../../checklogout.php" class="navbar-nav mr-auto text-light">
-              <span><?php echo $_SESSION["name"]; ?>&nbsp; <?php echo $_SESSION["surname"];  ?>&nbsp;<i class="fas fa-user-shield"></i></span>
-            </a>
-          </div>
         </div>
       </nav>
 
@@ -108,9 +125,9 @@ $loadroutes = $stm->fetchAll();
               <br>
             </div>
 
-            <table class="table table-striped table-dark justify-content-center">
+            <table class="table table table-striped justify-content-center">
 
-              <thead>
+            <thead class="thead-dark">
                 <!-- start-table-->
                 <tr>
                   <th>
@@ -128,15 +145,8 @@ $loadroutes = $stm->fetchAll();
                   <th>
                     <center>การทำงาน</center>
                   </th>
-
-                  <!-- <th>
-                    <center>ป้ายทะเบียนรถ</center>
-                  </th>
                   <th>
-                    <center>สถานะการทำงาน</center>
-                  </th> -->
-                  <th>
-                    <center>การจัดการ</center>
+                    <center></center>
                   </th>
                 </tr>
               </thead>
@@ -169,10 +179,11 @@ $loadroutes = $stm->fetchAll();
                       <td>
                         <center>
                           <a type="button" onclick="showdatadriver('<?php echo $driver['d_name']; ?>','<?php echo $driver['d_lastname']; ?>','<?php echo $driver['phone']; ?>',
-                      '<?php echo $driver['sex']; ?>', '<?php echo $driver['rid']; ?>')" class="btn btn-warning active " data-toggle="modal" data-target="#datadriver">
-                            <i class="fas fa-clipboard-list"></i> รายละเอียด</a>
-                          <a href="details_driver.php?detaildriver=<?= $driver['d_id']; ?>" class="btn btn-info active"><i class="fas fa-user-edit"></i> แก้ไขข้อมูล</a>
-                          <a onclick="return confirm('ต้องการลบข้อมูลคนขับหรือไม่?')" href="driver_Delete.php?del=<?= $driver['d_id']; ?>" class="btn btn-danger active"><i class="fas fa-trash-alt"></i> ลบข้อมูล</a>
+                      '<?php echo $driver['sex']; ?>', '<?php echo $driver['rid']; ?>')" class="btn btn-primary btn-sm active " data-toggle="modal" data-target="#datadriver">
+                            <i class="fas fa-folder-open mr-2"></i>View</a>
+                          <a href="details_driver.php?detaildriver=<?= $driver['d_id']; ?>" class="btn btn-info btn-sm active "><i class="fas fa-user-edit mr-2"></i>Edit</a>
+                          <a onclick="return confirm('ต้องการลบข้อมูลคนขับหรือไม่?')" href="driver_Delete.php?del=<?= $driver['d_id']; ?>" class="btn btn-danger btn-sm active">
+                          <i class="fas fa-trash-alt mr-2"></i>Delet</a>
                         </center>
                       </td>
                     </tr>
@@ -186,7 +197,6 @@ $loadroutes = $stm->fetchAll();
 
                 <?php  } ?>
               </tbody>
-
 
             </table> <!-- end-table-->
             <?php
@@ -227,8 +237,6 @@ $loadroutes = $stm->fetchAll();
   <!-- javascript ส่งค่าไม่ Modal -->
   <script>
     function showdatadriver(name, lname, phone, sex, rid) {
-
-
       $('#datadriver').modal('show');
       setTimeout(function() {
         document.getElementById("show_name").value = name;
@@ -236,10 +244,7 @@ $loadroutes = $stm->fetchAll();
         document.getElementById("show_phone").value = phone;
         document.getElementById("show_sex").value = sex;
         document.getElementById("show_rid").value = rid;
-        // val['value'] value คือ = ชื่อ fields
-      }, 200); // setTimeout เพราะว่าเผื่อเวลาที่ใช้ในการเปิด modal ครับ
-
-
+        }, 200); 
 
     }
   </script>

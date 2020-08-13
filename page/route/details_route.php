@@ -111,9 +111,16 @@ echo '</script>';
                     </center>
                 </div>
 
-                <a href="../driver_data/data_driver.php" class="list-group-item list-group-item-action bg-dark text-white "><i class="fas fa-folder-open"></i>&nbsp;ข้อมูลคนขับ</a>
-                <a href="../route/data_route.php" class="list-group-item list-group-item-action bg-dark text-white "><i class="fas fa-folder-open"></i>&nbsp;จัดการเส้นทาง</a>
-                <a href="../../checklogout.php" class="list-group-item list-group-item-action bg-dark text-danger"><i class="fas fa-power-off">&nbsp;ออกจากระบบ</i></a>
+                <a href="../driver_data/data_driver.php" class="list-group-item list-group-item-action bg-dark text-white ">
+                <i class="fas fa-folder-open mr-2"></i>ข้อมูลคนขับ</a>
+                <a href="../route/data_route.php" class="list-group-item list-group-item-action bg-dark text-white ">
+                <i class="fas fa-folder-open mr-2"></i>จัดการเส้นทาง</a>
+                <?php if ($_SESSION['type'] == 'm_admin') { ?>
+                    <a href="../admin/dataadmin.php" class="list-group-item list-group-item-action bg-dark text-white ">
+                    <i class="fas fa-folder-open mr-2 "></i>จัดการผู้แลระบบ</a>
+                <?php } ?>
+                <a href="../../checklogout.php" class="list-group-item list-group-item-action bg-dark text-danger">
+                <i class="fas fa-power-off mr-2"></i>ออกจากระบบ</a>
             </div>
         </div>
         <!-- /#sidebar-wrapper -->
@@ -123,13 +130,24 @@ echo '</script>';
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
                 <button class="btn btn-dark" id="menu-toggle"><i class="fa fa-bars"></i></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav mr-auto">
+                    <ul class="navbar-nav ml-auto">
+
+                        <li class="nav-item dropdown" aria-labelledby="navbarDropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" style="color:white;"><?php echo $_SESSION['name']; ?>&nbsp;<?php echo $_SESSION['surname']; ?>
+                                <i class="fas fa-user-shield"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                                <div class="dropdown-divider"></div>
+                                <a href="../account/account.php" class="dropdown-item">
+                                    <i class="fas fa-user-cog mr-2"></i>ข้อมูลส่วนตัว
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a href="../../checklogout.php" class="dropdown-item" style="color:red;">
+                                    <i class="fas fa-power-off mr-2"></i>ออกจากระบบ
+                                </a>
+                        </li>
+
                     </ul>
-                    <div class="form-inline my-2 my-lg-">
-                        <a href="../../checklogout.php" class="navbar-nav mr-auto text-light">
-                            <span><?php echo $_SESSION["name"]; ?>&nbsp; <?php echo $_SESSION["surname"];  ?>&nbsp;<i class="fas fa-user-shield"></i></span>
-                        </a>
-                    </div>
                 </div>
             </nav>
             <br>

@@ -1,8 +1,8 @@
 <?php
 require '../../config.php';
-$driverid = $_GET['detaildriver'];
-
 session_start();
+$idadmim = $_SESSION["id"];
+
 if ($_SESSION["username"] == null &&  $_SESSION["username"] == '') {
     echo "<script>";
     echo "alert('กรุณาลงชื่อเข้าใช้ระบบ')";
@@ -27,17 +27,11 @@ if (isset($_POST['edit_data'])) {
         echo "</script>";
     }
 }
-$sql1 = "SELECT driver.d_id,driver.d_name,driver.d_lastname,driver.phone,route.rid,route.start_route_name,route.end_route_name
-    FROM route,driver
-    WHERE route.rid = driver.rid
-    and driver.d_id = '$driverid'";
+$sql1 = "SELECT * FROM admin
+    WHERE id = '$idadmim'";
 $stm = $connection->prepare($sql1);
 $stm->execute();
-$drivers = $stm->fetch(PDO::FETCH_ASSOC);
-$sql3 = "SELECT * From route";
-$stm = $connection->prepare($sql3);
-$stm->execute();
-$loadroutes = $stm->fetchAll();
+$admin = $stm->fetch(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -71,15 +65,15 @@ $loadroutes = $stm->fetchAll();
                 </div>
 
                 <a href="../driver_data/data_driver.php" class="list-group-item list-group-item-action bg-dark text-white ">
-                <i class="fas fa-folder-open mr-2"></i>ข้อมูลคนขับ</a>
+                <i class="fas fa-folder-open mr-2"></i>&nbsp;ข้อมูลคนขับ</a>
                 <a href="../route/data_route.php" class="list-group-item list-group-item-action bg-dark text-white ">
-                <i class="fas fa-folder-open mr-2"></i>จัดการเส้นทาง</a>
+                <i class="fas fa-folder-open mr-2"></i>&nbsp;จัดการเส้นทาง</a>
                 <?php if ($_SESSION['type'] == 'm_admin') { ?>
                     <a href="../admin/dataadmin.php" class="list-group-item list-group-item-action bg-dark text-white ">
                     <i class="fas fa-folder-open mr-2"></i>จัดการผู้แลระบบ</a>
                 <?php } ?>
                 <a href="../../checklogout.php" class="list-group-item list-group-item-action bg-dark text-danger">
-                <i class="fas fa-power-off mr-2"></i>ออกจากระบบ</a>
+                <i class="fas fa-power-off mr-2">&nbsp;ออกจากระบบ</i></a>
             </div>
         </div>
         <!-- /#sidebar-wrapper -->
@@ -98,7 +92,7 @@ $loadroutes = $stm->fetchAll();
                             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                                 <div class="dropdown-divider"></div>
                                 <a href="../account/account.php" class="dropdown-item">
-                                    <i class="fas fa-user-cog"></i>ข้อมูลส่วนตัว
+                                    <i class="fas fa-user-cog mr-2"></i>ข้อมูลส่วนตัว
                                 </a>
                                 <div class="dropdown-divider"></div>
                                 <a href="../../checklogout.php" class="dropdown-item" style="color:red;">
@@ -114,40 +108,39 @@ $loadroutes = $stm->fetchAll();
                 <div class="card ">
                     <div class="card-header">
                         <div class="col">
-                            <h2 class="text-left">แก้ไขข้อมูลคนขับ</h2>
+                            <h2 class="text-left">แก้ไขข้อมูล</h2>
                         </div>
                     </div>
                     <div class="card-body">
                         <form method="POST">
                             <div class="form-group">
-                                <label for="inputIddriver">รหัสคนขับ</label>
-                                <input type="text" class="form-control" id="inputIddriver" name="edit_id" value="<?php echo $drivers['d_id'] ?>" required readonly>
+                                <label for="inputIddriver">รหัสผู้ดูแลระบบ</label>
+                                <input type="text" class="form-control" id="inputIddriver" name="edit_id" value="<?php echo $admin['id'] ?>" required readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputIddriver">ชื่อเข้าใช้ระบบ</label>
+                                <input type="text" class="form-control" id="inputIddriver" name="edit_id" value="<?php echo $admin['username'] ?>" required readonly>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label for="inputName">ชื่อ</label>
-                                    <input type="text" class="form-control" id="inputName" name="edit_name" value="<?php echo $drivers['d_name'] ?>" required>
+                                    <input type="text" class="form-control" id="inputName" name="edit_name" value="<?php echo $admin['name'] ?>" required>
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="inputLastname">นามสกุล</label>
-                                    <input type="text" class="form-control" id="inputLastname" name="edit_lastname" value="<?php echo $drivers['d_lastname'] ?>" required>
+                                    <input type="text" class="form-control" id="inputLastname" name="edit_lastname" value="<?php echo $admin['surname'] ?>" required>
+                                </div>                 
+                                <div class="form-group col-md-6">
+                                    <label for="inputLastname">เพศ</label>
+                                    <input type="text" class="form-control" id="inputLastname" name="edit_lastname" value="<?php echo $admin['sex'] ?>" readonly>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="inputPhonenumber">เบอร์โทรติดต่อ</label>
-                                <input type="text" class="form-control" id="inputPhoneNumber" name="edit_phonenumber" value="<?php echo $drivers['phone'] ?>" required>
+                                <input type="text" class="form-control" id="inputPhoneNumber" name="edit_phonenumber" value="<?php echo $admin['phone'] ?>" required>
                             </div>
                             <div class="form-group">
-                                <label for="exampleFormControlSelect1">กำหนดเส้นทาง</label>
-                                <select class="form-control" id="exampleFormControlSelect1" name="edit_routeadd">
-                                    <option value="<?php echo $drivers['rid']; ?>"><?php echo $drivers['start_route_name'] . '-' . $drivers['end_route_name']; ?></option>
-                                    <?php foreach ($loadroutes as $loadroute) : ?>
-                                        <option value="<?php echo $loadroute['rid']; ?>"><?php echo $loadroute['start_route_name'] . '-' . $loadroute['end_route_name']; ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-primary" name="edit_data">แก้ไขข้อมูลคนขับ</button>
+                                <button type="submit" class="btn btn-primary" name="edit_data">แก้ไขข้อมูล</button>
                                 <button type="reset" class="btn btn-danger" name="edit_data">ยกเลิก</button>
                             </div>
                         </form>
