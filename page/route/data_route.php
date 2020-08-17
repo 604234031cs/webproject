@@ -49,11 +49,7 @@ $check_id = $stm->fetch(PDO::FETCH_ASSOC);
   <!-- Bootstrap core CSS -->
   <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css">
   <!-- <script type="text/javascript" src="https://api.longdo.com/map/?key=8b2c05d9523bf70f5c85804f7e98de02 "></script> -->
-  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyCkVnfTM23P1pUplxQhRQwa7JLqE4rBlwg"></script>
-  <script defer
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD61r5MULrXwYo54E87mvXoirM_BUgHtFM&callback=initMap">
-</script>
-   <script type="text/javascript" src="../../js/detailpointmap.js "></script>
+  
   <!-- Custom styles for this template -->
   <link href="../../css/responside.css" rel="stylesheet">
 
@@ -74,7 +70,7 @@ $check_id = $stm->fetch(PDO::FETCH_ASSOC);
           <i class="fas fa-folder-open mr-2"></i>ข้อมูลคนขับ</a>
         <a href="#" class="list-group-item list-group-item-action bg-dark text-white">
           <i class="fas fa-folder-open mr-2"></i>จัดการเส้นทาง</a>
-        <?php if ($_SESSION['type'] == 'm_admin') { ?>
+        <?php if ($_SESSION['type'] == 'admin') { ?>
           <a href="../admin/dataadmin.php" class="list-group-item list-group-item-action bg-dark text-white ">
             <i class="fas fa-folder-open mr-2"></i>จัดการผู้แลระบบ</a>
         <?php } ?>

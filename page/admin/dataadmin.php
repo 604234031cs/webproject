@@ -72,7 +72,7 @@ $check_id = $stm->fetch(PDO::FETCH_ASSOC);
                     <i class="fas fa-folder-open mr-2"></i>ข้อมูลคนขับ</a>
                 <a href="../route/data_route.php" class="list-group-item list-group-item-action bg-dark text-white">
                     <i class="fas fa-folder-open mr-2"></i>จัดการเส้นทาง</a>
-                <?php if ($_SESSION['type'] == 'm_admin') { ?>
+                <?php if ($_SESSION['type'] == 'admin') { ?>
                     <a href="" class="list-group-item list-group-item-action bg-dark text-white ">
                         <i class="fas fa-folder-open mr-2"></i>จัดการผู้แลระบบ</a>
                 <?php } ?>
@@ -227,7 +227,7 @@ $check_id = $stm->fetch(PDO::FETCH_ASSOC);
         <!-- /#page-content-wrapper -->
     </div>
     <script src="../../node_modules/jquery/dist/jquery.slim.min.js"></script>
-    <script src="../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 
     <!-- Menu Toggle Script -->
     <script>
@@ -250,29 +250,6 @@ $check_id = $stm->fetch(PDO::FETCH_ASSOC);
             }, 200);
         }
     </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     <!-- เพิ่มข้อมูลผู้ดูแลระบบ -->
@@ -336,7 +313,7 @@ $check_id = $stm->fetch(PDO::FETCH_ASSOC);
 
     <!-- แก้ไขข้อมูลผู้ดูแลระบบ -->
     <div class="modal fade  " id="editadmin" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-warning">
                     <h5 class="modal-title" id="exampleModalLabel">รายละเอียดคนขับ</h5>
@@ -380,11 +357,11 @@ $check_id = $stm->fetch(PDO::FETCH_ASSOC);
                     <div class="card">
                         <div class="card-header">
                             <button class="btn btn-warning" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                               เปลี่ยนรหัสผ่านผู้ดูแลระบบ
+                                เปลี่ยนรหัสผ่านผู้ดูแลระบบ
                             </button>
                         </div>
                     </div>
-                    <div class="collapse" id="collapseExample">
+                    <div class="collapse " id="collapseExample">
                         <div class="card card-body">
                             Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
                         </div>

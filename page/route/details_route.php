@@ -42,64 +42,117 @@ echo '</script>';
     <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <script type="text/javascript" src="https://api.longdo.com/map/?key=8b2c05d9523bf70f5c85804f7e98de02 "></script>
-    <!-- Custom styles for this template -->
+    <!-- <script type="text/javascript" src="https://api.longdo.com/map/?key=8b2c05d9523bf70f5c85804f7e98de02 "></script> -->
+    <!-- <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD61r5MULrXwYo54E87mvXoirM_BUgHtFM&callback=initMap&libraries=&v=weekly">
+    </script> -->
+
+    <!-- <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD61r5MULrXwYo54E87mvXoirM_BUgHtFM&libraries=places"></script> -->
+    <!-- <script defer src="https://maps.googleapis.com/maps/api/directions/json?origin=Toronto&destination=Montreal&key=AIzaSyAj0VNGE0a_5VnsvQpxUkLBMI4fXeLb7eE"></script> -->
     <link href="../../css/responside.css" rel="stylesheet">
-    <link href="../../css/mapdetail.css" rel="stylesheet">
     <!-- <script src="../../js/detailpointmap.js"></script> -->
 </head>
 
-<body onload="init();">
+<script type="text/javascript">
+    var maps, infoWindow, geocoder;
+    var info;
+    var markerstart;
+    var markerend;
+    var markerpoint;
+    const image =
+        "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png";
+    var index = <?php echo $index; ?>;
 
-    <script type="text/javascript">
-        function init() {
-            // var marker;
-            var i;
-            var marker1;
-            var marker2;
-            var marker3;
-            var index = <?php echo $index; ?>;
-            // console.log(data[0]['po_name']);
-            // console.log(data[0]['po_name']);
-            console.log(data1['start_route_name']);
-            console.log(data1['end_route_name']);
+    function initMap() {
 
-            console.log(index);
-            // alert(data[0]['po_name']);
-            map = new longdo.Map({
-                placeholder: document.getElementById('map')
-            });
-            map.location(longdo.LocationMode.Geolocation); // go to 100, 16 when created map
-            map.Route.placeholder(document.getElementById('result'));
-            map.zoom(false, true);
-            markerstart = new longdo.Marker({
-                lon: data1['start_route_pos_log'],
-                lat: data1['start_route_pos_lat']
-            }, {
-                title: data1['start_route_name'],
-                detail: 'Simple popup'
-            });
-            markerend = new longdo.Marker({
-                lon: data1['end_route_pos_log'],
-                lat: data1['end_route_pos_lat']
-            });
-            map.Overlays.add(markerstart);
-            map.Overlays.add(markerend);
-            map.Route.add(markerstart);
-            map.Route.add(markerend);
-
-            for (i = 0; i <= index; i++) {
-                marker = new longdo.Marker({
-                    lon: data[i]['po_longitude'],
-                    lat: data[i]['po_latitude']
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                const directionsService = new google.maps.DirectionsService();
+                const directionsRenderer = new google.maps.DirectionsRenderer();
+                maps = new google.maps.Map(document.getElementById('map'), {
+                    center: pos,
+                    zoom: 12
                 });
 
-                map.Overlays.add(marker);
-                map.Route.add(marker);
-
-            }
+                markerstart = new google.maps.Marker({
+                    position: new google.maps.LatLng(data1['start_route_pos_lat'], data1['start_route_pos_log']),
+                    map: maps,
+                    icon: image
+                });
+                markerend = new google.maps.Marker({
+                    position: new google.maps.LatLng(data1['end_route_pos_lat'], data1['end_route_pos_log']),
+                    map: maps,
+                    icon: image
+                });
+                for (let i = 0; i <= index; i++) {
+                    markerpoint = new google.maps.Marker({
+                        position: new google.maps.LatLng(data[i]['po_latitude'], data[i]['po_longitude']),
+                        map: maps,
+                    });
+                }
+            }, function() {
+                handleLocationError(true, infoWindow, maps.getCenter());
+            });
+        } else {
+            // Browser doesn't support Geolocation
+            handleLocationError(false, infoWindow, maps.getCenter());
         }
-    </script>
+
+        directionsRenderer.setMap(maps);
+        // calculateAndDisplayRoute(directionsService, directionsRenderer);
+    }
+
+    function calculateAndDisplayRoute(directionsService, directionsRenderer) {
+        const waypts = ['ตลาดกิมหยง'];
+        // for (let i = 0; i <= index; i++) {
+        //     waypts.push({
+        //         location: new google.maps.LatLng(data[i]['po_latitude'], data[i]['po_longitude']),
+        //         stopover: false
+        //     });
+        // }
+        directionsService.route({
+                origin: new google.maps.LatLng(data1['start_route_pos_lat'], data1['start_route_pos_log']),
+                destination: new google.maps.LatLng(data1['end_route_pos_lat'], data1['end_route_pos_log']),
+                waypoints: waypts,
+                optimizeWaypoints: true,
+                travelMode: google.maps.TravelMode.DRIVING
+            },
+            (response, status) => {
+                if (status === "OK") {
+                    directionsRenderer.setDirections(response);
+                    const route = response.routes[0];
+                    const summaryPanel = document.getElementById("directions-panel");
+                    summaryPanel.innerHTML = "";
+                    // For each route, display summary information.
+                    for (let i = 0; i < route.legs.length; i++) {
+                        const routeSegment = i + 1;
+                        summaryPanel.innerHTML +=
+                            "<b>Route Segment: " + routeSegment + "</b><br>";
+                        summaryPanel.innerHTML += route.legs[i].start_address + " to ";
+                        summaryPanel.innerHTML += route.legs[i].end_address + "<br>";
+                        summaryPanel.innerHTML += route.legs[i].distance.text + "<br><br>";
+                    }
+                } else {
+                    window.alert("Directions request failed due to " + status);
+                }
+            }
+        );
+    }
+
+    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+            'Error: The Geolocation service failed.' :
+            'Error: Your browser doesn\'t support geolocation.');
+        infoWindow.open(maps);
+
+    }
+</script>
+
+<body>
     <div class="d-flex" id="wrapper">
         <!-- Sidebar -->
         <div class="bg-dark " id="sidebar-wrapper">
@@ -112,15 +165,15 @@ echo '</script>';
                 </div>
 
                 <a href="../driver_data/data_driver.php" class="list-group-item list-group-item-action bg-dark text-white ">
-                <i class="fas fa-folder-open mr-2"></i>ข้อมูลคนขับ</a>
+                    <i class="fas fa-folder-open mr-2"></i>ข้อมูลคนขับ</a>
                 <a href="../route/data_route.php" class="list-group-item list-group-item-action bg-dark text-white ">
-                <i class="fas fa-folder-open mr-2"></i>จัดการเส้นทาง</a>
-                <?php if ($_SESSION['type'] == 'm_admin') { ?>
+                    <i class="fas fa-folder-open mr-2"></i>จัดการเส้นทาง</a>
+                <?php if ($_SESSION['type'] == 'admin') { ?>
                     <a href="../admin/dataadmin.php" class="list-group-item list-group-item-action bg-dark text-white ">
-                    <i class="fas fa-folder-open mr-2 "></i>จัดการผู้แลระบบ</a>
+                        <i class="fas fa-folder-open mr-2 "></i>จัดการผู้แลระบบ</a>
                 <?php } ?>
                 <a href="../../checklogout.php" class="list-group-item list-group-item-action bg-dark text-danger">
-                <i class="fas fa-power-off mr-2"></i>ออกจากระบบ</a>
+                    <i class="fas fa-power-off mr-2"></i>ออกจากระบบ</a>
             </div>
         </div>
         <!-- /#sidebar-wrapper -->
@@ -178,10 +231,18 @@ echo '</script>';
                                 </h2>
                             </div>
                         </div>
+                        <style>
+                            #map {
+                                width: 100%;
+                                height: 700px;
+                            }
+                        </style>
                         <div class="card-body">
-                            <div id="map">
+                            <div id="control">
+                                <div id="map">
+                                </div>
+                                <div id="directions-panel"></div>
                             </div>
-                            <div id="result"></div>
                         </div>
                     </div>
                 </div>

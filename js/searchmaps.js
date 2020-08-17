@@ -11,18 +11,15 @@ var map, infoWindow,geocoder;
                 center: pos,
                 zoom: 17
             });
-
+           
             const marker =new google.maps.Marker({
                 position: pos,
                 map:map
               });
               infowindow = new google.maps.InfoWindow({
-                content: "<p>Marker Location:" + marker.getPosition() + "</p>"
+                content: "<p>ตำแหน่งปัจจุบัน(lat,lng):" + marker.getPosition() + "</p>"
               });
-              google.maps.event.addListener(marker, "click", () => {
-                infowindow.open(map, marker);
-              });
-
+              infowindow.open(map, marker);
             // infoWindow.setPosition(pos);
           }, function() {
             handleLocationError(true, infoWindow, map.getCenter());
@@ -44,8 +41,6 @@ var map, infoWindow,geocoder;
         infoWindow.open(map);
       }
 
-
-  
  function codeAddress() {
     var address = document.getElementById('address').value;
     geocoder.geocode( { 'address': address}, function(results, status) {
@@ -55,14 +50,10 @@ var map, infoWindow,geocoder;
             map: map,
             position: results[0].geometry.location
         });
-
-
         infowindow = new google.maps.InfoWindow({
-            content: "<p>Marker Location:" + marker.getPosition() + "</p>"
+            content: "<p>Marker Location(lat,lng):" + marker.getPosition() + "</p>"
           });
-          google.maps.event.addListener(marker, "click", () => {
-            infowindow.open(map, marker);
-          });
+          infowindow.open(map,marker); 
       } else {
         alert('Geocode was not successful for the following reason: ' + status);
       }

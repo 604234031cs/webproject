@@ -61,7 +61,7 @@
   // echo $editroutes['rid'];
   // $message = $driver['name'];
   $start = ($page - 1) * $perpage;
-  $sql2 = "SELECT * FROM point where rid='$editrid' limit {$start},{$perpage}";
+  $sql2 = "SELECT * FROM point where rid='$editrid'";
   $stm = $connection->prepare($sql2);
   $stm->execute();
   $points = $stm->fetchAll(PDO::FETCH_ASSOC);
@@ -86,10 +86,13 @@
    <link rel="stylesheet" href="../../fontawesome/css/all.min.css">
    <!-- Bootstrap core CSS -->
    <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css">
+   <!-- <script type="text/javascript" src="https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyCkVnfTM23P1pUplxQhRQwa7JLqE4rBlwg"></script>
+   <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD61r5MULrXwYo54E87mvXoirM_BUgHtFM&callback=initMap"> -->
+   </script>
+   <script type="text/javascript" src="../../js/editpage.js "></script>
    <!-- Custom styles for this template -->
    <link href="../../css/responside.css" rel="stylesheet">
  </head>
-
  <body>
    <div class="d-flex" id="wrapper">
 
@@ -104,7 +107,7 @@
 
          <a href="../driver_data/data_driver.php" class="list-group-item list-group-item-action bg-dark text-white "><i class="fas fa-folder-open mr-2"></i>ข้อมูลคนขับ</a>
          <a href="../route/data_route.php" class="list-group-item list-group-item-action bg-dark text-white"><i class="fas fa-folder-open mr-2"></i>จัดการเส้นทาง</a>
-         <?php if ($_SESSION['type'] == 'm_admin') { ?>
+         <?php if ($_SESSION['type'] == 'admin') { ?>
            <a href="../admin/dataadmin.php" class="list-group-item list-group-item-action bg-dark text-white "><i class="fas fa-folder-open mr-2"></i>จัดการผู้แลระบบ</a>
          <?php } ?>
          <a href="../../checklogout.php" class="list-group-item list-group-item-action bg-dark text-danger"><i class="fas fa-power-off mr-2"></i>ออกจากระบบ</i></a>
@@ -117,7 +120,7 @@
          <button class="btn btn-dark" id="menu-toggle"><i class="fa fa-bars"></i></button>
          <div class="collapse navbar-collapse" id="navbarSupportedContent">
            <ul class="navbar-nav ml-auto">
-           <li class="nav-item dropdown" aria-labelledby="navbarDropdown">
+             <li class="nav-item dropdown" aria-labelledby="navbarDropdown">
                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" style="color:white;"><?php echo $_SESSION['name']; ?>&nbsp;<?php echo $_SESSION['surname']; ?>
                  <i class="fas fa-user-shield"></i>
                </a>
@@ -229,77 +232,87 @@
          <!-- /card -->
          <br>
          <!-- card -->
-         <div class="card card-default">
-           <!-- card-header -->
-           <div class="card-header">
-             <h3 class="card-title">ระหว่างทาง</h3>
-           </div>
-           <!-- /card-header -->
-           <!-- card-body -->
-           <div class="card-body">
-             <table class="table table-striped  justify-content-center">
-               <thead>
-                 <tr>
-                   <th>
-                     <center>รหัส</center>
-                   </th>
-                   <th>
-                     <center>ชื่อสถานที่่</center>
-                   </th>
-                   <th>
-                     <center>ละติจูด</center>
-                   </th>
-                   <th>
-                     <center>ลองจิจูด</center>
-                   </th>
-                   <th>
-                     <center></center>
-                   </th>
-                 </tr>
-               </thead>
-               <tbody>
-                 <?php foreach ($points as $point) : ?>
-                   <tr>
+         <div class="row">
+           <div class="col-12">
+             <div class="card ">
+               <!-- card-header -->
+               <div class="card-header">
+                 <h3 class="card-title">จุดระหว่างทาง</h3>
+                 <div class="card-tools float-right">
+                   <div class="input-group input-group-sm" style="width: 350px;">
+                     <input type="text" name="table_search" class="form-control " placeholder="Search">
+                     <div class="input-group-append">
+                       <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+               <!-- /card-header -->
+               <!-- card-body -->
+               <div class="table-responsive" style="height: 300px;">
+                 <table class="table table-fixed">
+                   <thead>
+                     <tr>
+                       <th>
+                         <center>รหัส</center>
+                       </th>
+                       <th>
+                         <center>ชื่อสถานที่่</center>
+                       </th>
+                       <th>
+                         <center>ละติจูด</center>
+                       </th>
+                       <th>
+                         <center>ลองจิจูด</center>
+                       </th>
+                       <th>
+                         <center></center>
+                       </th>
+                     </tr>
+                   </thead>
+                   <tbody>
+                     <?php foreach ($points as $point) : ?>
+                       <tr>
 
-                     <td>
-                       <center><?php echo $point['po_id']; ?></center>
-                     </td>
-                     <td>
-                       <center><?php echo $point['po_name']; ?></center>
-                     </td>
-                     <td>
-                       <center><?php echo $point['po_latitude']; ?></center>
-                     </td>
-                     <td>
-                       <center><?php echo $point['po_longitude']; ?></center>
-                     </td>
-                     <td>
-                       <center>
-                       <div class="btn-group btn-group-sm">
-                        <a type="button" onclick="setval('<?php echo $point['po_id']; ?>','<?php echo $point['po_name']; ?>','<?php echo $point['po_latitude']; ?>','<?php echo $point['po_longitude']; ?>')" class="btn btn-info active " data-toggle="modal" data-target="#editModal">
-                           <i class="fas fa-map-marker-alt mr-2"></i>Edit</a>
-                         <a onclick="return confirm('ต้องการลบข้อมูลนี้หรือไม่?')" href="route_delete.php?delpoint=<?= $point['po_id']; ?>" class="btn btn-danger btn-sm  active"><i class="fas fa-trash-alt mr-2"></i>Delete</a>
-                      </div>
-                       </center>
+                         <td>
+                           <center><?php echo $point['po_id']; ?></center>
+                         </td>
+                         <td>
+                           <center><?php echo $point['po_name']; ?></center>
+                         </td>
+                         <td>
+                           <center><?php echo $point['po_latitude']; ?></center>
+                         </td>
+                         <td>
+                           <center><?php echo $point['po_longitude']; ?></center>
+                         </td>
+                         <td>
+                           <center>
+                             <div class="btn-group btn-group-sm">
+                               <a type="button" onclick="setval('<?php echo $point['po_id']; ?>','<?php echo $point['po_name']; ?>','<?php echo $point['po_latitude']; ?>','<?php echo $point['po_longitude']; ?>')" class="btn btn-info btn-sm active " data-toggle="modal" data-target="#editModal">
+                                 <i class="fas fa-map-marker-alt mr-2"></i>Edit</a>
+                               <a onclick="return confirm('ต้องการลบข้อมูลนี้หรือไม่?')" href="route_delete.php?delpoint=<?= $point['po_id']; ?>" class="btn btn-danger btn-sm  active"><i class="fas fa-trash-alt mr-2"></i>Delete</a>
+                             </div>
+                           </center>
 
-                     </td>
-                     <td>
+                         </td>
+                         <td>
 
-                     </td>
-                     </form>
-                   </tr>
+                         </td>
+                         </form>
+                       </tr>
 
-               </tbody>
-             <?php endforeach; ?>
-             </table>
-             <?php
-              $sql1 = "SELECT * FROM  point where rid = '$editrid'";
-              $stm = $connection->prepare($sql1);
-              $stm->execute();
-              $row = $stm->fetchAll(PDO::FETCH_ASSOC);
-              $total_record = $stm->rowCount();
-              $total_page = ceil($total_record / $perpage);
-              ?>
+                   </tbody>
+                 <?php endforeach; ?>
+                 </table>
+                 <!-- <?php
+                      $sql1 = "SELECT * FROM  point where rid = '$editrid'";
+                      $stm = $connection->prepare($sql1);
+                      $stm->execute();
+                      $row = $stm->fetchAll(PDO::FETCH_ASSOC);
+                      $total_record = $stm->rowCount();
+                      $total_page = ceil($total_record / $perpage);
+                      ?>
              <nav aria-label="Page navigation example">
                <ul class="pagination justify-content-end">
                  <li class="page-item"><a class="page-link" href="edit_route.php?page=1"> Previous</a></li>
@@ -308,18 +321,20 @@
                  <?php } ?>
                  <li class="page-item"><a class="page-link" href="edit_route.php?page=<?php echo $total_page; ?>">Next</a></li>
                </ul>
-             </nav>
+             </nav> -->
+               </div>
+               <!-- /card-body -->
+             </div>
+             <!-- /card -->
            </div>
-           <!-- /card-body -->
          </div>
-         <!-- /card -->
        </div>
        <!-- /#page-content-wrapper -->
      </div>
    </div>
 
    <script src="../../node_modules/jquery/dist/jquery.slim.min.js"></script>
-   <script src="../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+   <script src="../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 
    <!-- Menu Toggle Script -->
    <script>
@@ -333,13 +348,11 @@
      function setval(id, name, lat, log) {
        console.log(id);
        $('#editModal').modal('show'); //เผื่อ modal ไม่ขึ้นนะครับ
-
        setTimeout(function() {
          document.getElementById("showd_id").value = id;
          document.getElementById("showd_name").value = name;
          document.getElementById("showd_lat").value = lat;
          document.getElementById("showd_log").value = log;
-
        }, 200); // setTimeout เพราะว่าเผื่อเวลาที่ใช้ในการเปิด modal ครับ
      }
    </script>
@@ -348,13 +361,26 @@
  </html>
 
  <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-   <div class="modal-dialog">
+   <div class="modal-dialog modal-xl">
      <div class="modal-content">
        <div class="modal-header">
          <h4 class="modal-title">Modal Heading</h4>
          <button type="button" class="close" data-dismiss="modal">&times;</button>
        </div>
        <div class="modal-body">
+         <style>
+           #map {
+             width: 100%;
+             height: 450px;
+             flex: 4;
+           }
+         </style>
+
+         <div>
+           <input type="text" id="address" value="">
+           <input id="submit" type="button" value="ค้นหาข้อมูล" onclick="codeAddress()">
+         </div>
+         <div id="map"></div>
          <form method="POST">
            <div class="form-group">
              <label for="inputIddriver">Position Id</label>

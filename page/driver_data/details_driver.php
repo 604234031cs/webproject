@@ -74,7 +74,7 @@ $loadroutes = $stm->fetchAll();
                 <i class="fas fa-folder-open mr-2"></i>ข้อมูลคนขับ</a>
                 <a href="../route/data_route.php" class="list-group-item list-group-item-action bg-dark text-white ">
                 <i class="fas fa-folder-open mr-2"></i>จัดการเส้นทาง</a>
-                <?php if ($_SESSION['type'] == 'm_admin') { ?>
+                <?php if ($_SESSION['type'] == 'admin') { ?>
                     <a href="../admin/dataadmin.php" class="list-group-item list-group-item-action bg-dark text-white ">
                     <i class="fas fa-folder-open mr-2"></i>จัดการผู้แลระบบ</a>
                 <?php } ?>
